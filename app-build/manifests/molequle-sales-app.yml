@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: molequle-sales-app-service
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3000
+  selector:
+    app: molequle-sales-app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: molequle-sales-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: molequle-sales-app
+  template:
+    metadata:
+      labels:
+        app: molequle-sales-app
+    spec:
+      containers:
+        - name: molequle-sales-app
+          image: molequle.azurecr.io/molequle-sales-app
+          envFrom:
+            - secretRef:
+                name: molequle-sales-app-env
+      imagePullSecrets:
+        - name: acr-secret
